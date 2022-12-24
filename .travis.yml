@@ -1,0 +1,21 @@
+#specify docker as a dependency
+sudo: required
+services:
+  - docker
+
+#build test version of react project
+before_install:
+  - docker build -t tylrdnns/react-test -f ./client/Dockerfile.dev ./client
+
+#run test
+script:
+  - docker run -e CI=true tylrdnns/react-test npm test
+
+#build prod versions of all projects
+after_success:
+  - docker build -t tylrdnns/multi-client ./client
+  - docker build -t tylrdnns/multi-nginx ./nginx
+  - docker build -t tylrdnns/multi-server ./server
+  - docker build -t tylrdnns/multi-worker ./worker
+
+#push all to docker hub
