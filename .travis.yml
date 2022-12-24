@@ -17,5 +17,10 @@ after_success:
   - docker build -t tylrdnns/multi-nginx ./nginx
   - docker build -t tylrdnns/multi-server ./server
   - docker build -t tylrdnns/multi-worker ./worker
-
-#push all to docker hub
+  #login to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #push all to docker hub
+  - docker push tylrdnns/multi-client
+  - docker push tylrdnns/multi-nginx
+  - docker push tylrdnns/multi-server
+  - docker push tylrdnns/multi-worker
