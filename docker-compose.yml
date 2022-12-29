@@ -1,57 +1,31 @@
-version: '3'
+version: "3"
 services:
-  postgres:
-    image: 'postgres:latest'
-    environment:
-      - POSTGRES_PASSWORD=postgres_password
-  redis:
-    image: 'redis:latest'
-  nginx:
-    depends_on:
-      - api
-      - client
-    restart: always
-    build: 
-      dockerfile: Dockerfile.dev
-      context: ./nginx
-    ports:
-      - '3050:80'
-  api:
-    build: 
-      dockerfile: Dockerfile.dev
-      #tells where to look for the Dockerfile
-      context: ./server
-    volumes:
-    #puts hold/bookmark on modules file so that inside this container dont try to override or redirect acces to this, just leave as is
-      - /app/node_modules
-    #look at server dir and copy everything inside there into the app dir (except for the node module folder)
-    #anytime we make a change to src code, doesnt need to be rebuilt
-      - ./server:/app
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - PGUSER=postgres
-      - PGHOST=postgres
-      - PGDATABASE=postgres
-      - PGPASSWORD=postgres_password
-      - PGPORT=5432
   client:
+    image: "tylrdnns/multi-client"
+    mem_limit: 128m
+    hostname: client
+  server:
+    image: "tylrdnns/multi-server"
+    mem_limit: 128m
+    hostname: api
     environment:
-      - WDS_SOCKET_PORT=0
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./client
-    volumes:
-      - /app/node_modules
-      - ./client:/app
+      - REDIS_HOST=$REDIS_HOST
+      - REDIS_PORT=$REDIS_PORT
+      - PGUSER=$PGUSER
+      - PGHOST=$PGHOST
+      - PGDATABASE=$PGDATABASE
+      - PGPASSWORD=$PGPASSWORD
+      - PGPORT=$PGPORT
   worker:
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./worker
-    volumes:
-      - /app/node_modules
-      - ./worker:/app
+    image: "tylrdnns/multi-worker"
+    mem_limit: 128m
+    hostname: worker
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      
+      - REDIS_HOST=$REDIS_HOST
+      - REDIS_PORT=$REDIS_PORT
+  nginx:
+    image: "tylrdnns/multi-nginx"
+    mem_limit: 128m
+    hostname: nginx
+    ports:
+      - "80:80"

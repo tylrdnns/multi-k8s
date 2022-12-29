@@ -24,3 +24,15 @@ after_success:
   - docker push tylrdnns/multi-nginx
   - docker push tylrdnns/multi-server
   - docker push tylrdnns/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-east-1'
+  app: 'multi-container-react'
+  env: 'Multicontainerreact-env'
+  bucket_name: 'elasticbeanstalk-us-east-1-817345837297'
+  bucket_path: 'docker-multi'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
