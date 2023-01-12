@@ -11,7 +11,7 @@ function App() {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <p>
-            Fib Calculator V2
+            Fib Calculator V2 with K8s
           </p>
           <Link to="/">Home</Link>
           <Link to="/otherpage">Other Page</Link>
